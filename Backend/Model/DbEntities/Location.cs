@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Backend.Model.DbEntities
 {
@@ -21,10 +22,12 @@ namespace Backend.Model.DbEntities
         public string? District { get; set; }
 
         [Required]
+        [JsonIgnore]
         public Guid? AdvertisementId { get; set; }
 
         [Required]
         [ForeignKey(nameof(AdvertisementId))]
+        [JsonIgnore]
         public Advertisement? Advertisement { get; set; }
     }
 }

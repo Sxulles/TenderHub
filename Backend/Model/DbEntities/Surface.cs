@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Backend.Model.DbEntities
 {
@@ -18,10 +19,12 @@ namespace Backend.Model.DbEntities
         public string Unit { get; set; }
 
         [Required]
+        [JsonIgnore]
         public Guid? JobTaskId { get; set; }
 
         [Required]
         [ForeignKey(nameof(JobTaskId))]
+        [JsonIgnore]
         public Jobtask? Jobtask { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Backend.Model.DbEntities
 {
@@ -23,9 +24,11 @@ namespace Backend.Model.DbEntities
         public DateTime DeadlineEnd { get; init; }
 
         [Required]
+        [JsonIgnore]
         public Guid? ApplicationUserId { get; set; }
 
         [Required]
+        [JsonIgnore]
         [ForeignKey(nameof(ApplicationUserId))]
         public ApplicationUser? ApplicationUser { get; set; }
     }
