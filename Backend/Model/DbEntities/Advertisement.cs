@@ -9,6 +9,13 @@ namespace Backend.Model.DbEntities
         [Key]
         public Guid Id { get; init; }
 
+        [Required]
+        public string Status { get; set; } = "Active";
+
+        [Required]
+        public string JobType { get; set; }
+
+        [Required]
         public bool IsHighlighted { get; set; } = false;
 
         [Required]
@@ -28,7 +35,6 @@ namespace Backend.Model.DbEntities
         public Guid? ApplicationUserId { get; set; }
 
         [Required]
-        [JsonIgnore]
         [ForeignKey(nameof(ApplicationUserId))]
         public ApplicationUser? ApplicationUser { get; set; }
     }

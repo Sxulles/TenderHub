@@ -17,6 +17,7 @@ namespace Backend.Controllers
 
         [HttpGet]
         [Route("GetAdvertisements")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetAdvertisements()
         {
             try
@@ -31,6 +32,7 @@ namespace Backend.Controllers
 
         [HttpPost]
         [Route("AddAdvertisement")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddAdvertisement()
         {
             try
