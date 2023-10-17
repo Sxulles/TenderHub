@@ -10,8 +10,10 @@ namespace Backend.Service.Repository
         {
             using var dbContext = new ApplicationDbContext();
             return dbContext.Advertisements
+                .Include(a => a.ApplicationUser)
                 .Include(a => a.Location)
                 .Include(a => a.Jobtasks).ThenInclude(j => j.Surface)
+                .OrderByDescending(a => a.IsHighlighted)
                 .ToList();
         }
 
