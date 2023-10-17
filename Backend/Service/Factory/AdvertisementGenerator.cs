@@ -11,7 +11,9 @@ namespace Backend.Service.Factory
                 Id = Guid.NewGuid(),
                 ApplicationUserId = userId,
                 DeadlineStart = DateTime.UtcNow,
-                DeadlineEnd = DateTime.UtcNow.AddDays(6)
+                DeadlineEnd = DateTime.UtcNow.AddDays(6),
+                JobType = "TestJob",
+                IsHighlighted = Random.Shared.Next(0,1) == 0
             };
 
             advertisement.Location = CreateLocation(advertisement.Id);
