@@ -1,7 +1,7 @@
 ﻿using Backend.Data;
 using Backend.Model.DbEntities;
 
-namespace Backend.Service.Repository
+namespace Backend.Services.Repository
 {
     public class UserRepository : IUserRepository
     {

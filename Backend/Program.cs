@@ -1,7 +1,7 @@
 using Backend.Data;
 using Backend.Model.DbEntities;
-using Backend.Service.Auth;
-using Backend.Service.Repository;
+using Backend.Services.Auth;
+using Backend.Services.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -12,10 +12,10 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddControllers();
 builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
+builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -23,15 +23,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IAdvertisementRepository, AdvertisementRepository>();
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
 
-AddCorsPolicy();
 AddServices();
 
 var app = builder.Build();
 app.UseCors("AllowLocalhost");
-
 await AddRoles();
 
 // Configure the HTTP request pipeline.
@@ -55,6 +53,14 @@ app.Run();
 
 
 
+
+
+
+
+
+
+
+
 void AddCorsPolicy()
 {
     builder.Services.AddCors(options =>
@@ -68,18 +74,10 @@ void AddCorsPolicy()
     });
 }
 
-
-
-
-
-
-
-
-
 void AddServices()
 {
     builder.Services
-        .AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
+        .AddIdentityCore<ApplicationUser>(options =>
         {
             options.SignIn.RequireConfirmedAccount = false;
             options.User.RequireUniqueEmail = true;
@@ -139,13 +137,6 @@ void AddServices()
         });
     });
 }
-
-
-
-
-
-
-
 async Task AddRoles()
 {
     using var scope = app.Services.CreateScope(); // RoleManager is a scoped service, therefore we need a scope instance to access it

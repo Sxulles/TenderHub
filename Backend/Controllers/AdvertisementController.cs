@@ -1,24 +1,27 @@
-﻿using Backend.Service.Factory;
-using Backend.Service.Repository;
+﻿using Backend.Services.Factory;
+using Backend.Services.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class AdvertisementController : Controller
     {
-        private readonly IAdvertisementRepository _advertisementRepository;
-        private readonly IUserRepository _userRepository;
+        private IAdvertisementRepository _advertisementRepository;
+        private IUserRepository _userRepository;
+        private readonly ILogger<AdvertisementController> _logger;
 
-        public AdvertisementController(IAdvertisementRepository advertisementRepository, IUserRepository userRepository)
+        public AdvertisementController(ILogger<AdvertisementController> logger, IAdvertisementRepository advertisementRepository, IUserRepository userRepository)
         {
+            _logger = logger;
             _advertisementRepository = advertisementRepository;
             _userRepository = userRepository;
         }
 
-        [HttpGet]
-        [Route("GetAdvertisements")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GetAdvertisements()
+        [HttpGet(Name = "GetAdvertisements"), Authorize(Roles = "User")]
+        public async Task<IActionResult> Get()
         {
             try
             {
@@ -26,14 +29,12 @@ namespace Backend.Controllers
             }
             catch (Exception e)
             {
-                return NotFound("No advertisements in database.");
+                return BadRequest(e.Message);
             }
         }
 
-        [HttpPost]
-        [Route("AddAdvertisement")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddAdvertisement()
+        [HttpPost(Name = "AddAdvertisement"), Authorize(Roles = "User")]
+        public async Task<IActionResult> Add()
         {
             try
             {
@@ -47,6 +48,50 @@ namespace Backend.Controllers
             catch (Exception e)
             {
                 return BadRequest($"{e.Message}, {e.InnerException}");
+            }
+        }
+
+        [HttpPost]
+        [Route("SaveAdvertisement/user={userName:required}&advertisement={advertisementId:required}"), Authorize(Roles = "User")]
+        public async Task<IActionResult> SaveAdvertisementForUser(string userName, Guid advertisementId)
+        {
+            try
+            {
+                var success = await _advertisementRepository.SaveAdvertisementForUser(userName, advertisementId);
+
+                return success ? Ok(new { Success = success }) : BadRequest(new { Success = success });
+            }
+            catch
+            {
+                return BadRequest("Some error happened");
+            }
+        }
+
+        [HttpGet]
+        [Route("GetSavedAdvertisements/user={userName:required}"), Authorize(Roles = "User")]
+        public IActionResult GetSavedAdvertisementsForUser(string userName)
+        {
+            try
+            {
+                return Ok(_advertisementRepository.GetSavedAdvertisementForUser(userName));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpDelete]
+        [Route("DeleteSavedAdvertisement/user={userName:required}"), Authorize(Roles = "User")]
+        public IActionResult DeleteSavedAdvertisement(string userName)
+        {
+            try
+            {
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest("error");
             }
         }
     }

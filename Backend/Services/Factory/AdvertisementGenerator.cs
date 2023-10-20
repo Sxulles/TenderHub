@@ -1,8 +1,8 @@
 ﻿using Backend.Model.DbEntities;
 
-namespace Backend.Service.Factory
+namespace Backend.Services.Factory
 {
-    public static class AdvertisementGenerator
+    public class AdvertisementGenerator
     {
         public static Advertisement CreateAdvertisement(Guid userId)
         {
@@ -13,7 +13,7 @@ namespace Backend.Service.Factory
                 DeadlineStart = DateTime.UtcNow,
                 DeadlineEnd = DateTime.UtcNow.AddDays(6),
                 JobType = "TestJob",
-                IsHighlighted = Random.Shared.Next(0,1) == 0
+                IsHighlighted = Random.Shared.Next(0, 1) == 0
             };
 
             advertisement.Location = CreateLocation(advertisement.Id);
@@ -55,7 +55,7 @@ namespace Backend.Service.Factory
         {
             for (int i = 0; i < quantity; i++)
             {
-                var jobtask = new Jobtask 
+                var jobtask = new Jobtask
                 {
                     Id = Guid.NewGuid(),
                     AdvertisementId = advertisementId,

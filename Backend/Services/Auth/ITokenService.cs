@@ -1,6 +1,6 @@
 ﻿using Backend.Model.DbEntities;
 
-namespace Backend.Service.Auth
+namespace Backend.Services.Auth
 {
     public interface ITokenService
     {

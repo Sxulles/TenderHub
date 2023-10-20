@@ -5,7 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Backend.Service.Auth
+namespace Backend.Services.Auth
 {
     public class TokenService : ITokenService
     {
@@ -37,7 +37,9 @@ namespace Backend.Service.Auth
 
         private List<Claim> CreateClaims(ApplicationUser user, string? role)
         {
-            var claims = new List<Claim>
+            try
+            {
+                var claims = new List<Claim>
             {
                 new(JwtRegisteredClaimNames.Sub, "AuthToken"),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
@@ -47,12 +49,18 @@ namespace Backend.Service.Auth
                 new(ClaimTypes.Email, user.Email),
             };
 
-            if (role != null)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
+                if (role != null)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
 
-            return claims;
+                return claims;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         private SigningCredentials CreateSigningCredentials()
