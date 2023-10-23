@@ -4,26 +4,23 @@ import bookMark from "../assets/svg/bookmark.svg";
 import Cookies from 'js-cookie';
 
 
-const BookmarkedOffcanvas = ({user, advertisementId, name, ...props}) => {
+const BookmarkedOffcanvas = ({advertisementId, isSaved, ...props}) => {
 
     const [show, setShow] = useState(false);
+    const [savedAdvertisements, setSavedAdvertisements] = useState([]);
 
     const handleClose = () => setShow(false);
     const handleSave = async () => {
-      console.log(Cookies.get("Authorization"))
-
-      var isSavingSuccesful = await FetchApi(`https://localhost:7026/Advertisement/SaveAdvertisement/user=${user}&advertisement=${advertisementId}`, "POST") 
-      setSavedAdvertisements(await FetchApi(`https://localhost:7026/Advertisement/GetSavedAdvertisements/user=${user}`, "GET"))
-
+      if(!isSaved) {
+        // TODO: Add a status alert 
+        await FetchApi(`https://localhost:7026/Advertisements/SaveAdvertisement/${advertisementId}`, "POST") 
+      }
+      setSavedAdvertisements(await FetchApi(`https://localhost:7026/Advertisements/GetSavedAdvertisements`, "GET"))
       setShow(true);
     }
 
 
-    const [savedAdvertisements, setSavedAdvertisements] = useState([]);
-
-
     const FetchApi = async (url, httpMethod) => {
-      const token = Cookies.get("Authorization");
       
       try {
         const response = await fetch(url, {
@@ -31,7 +28,7 @@ const BookmarkedOffcanvas = ({user, advertisementId, name, ...props}) => {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${Cookies.get("Authorization")}`
           }
         });
     
@@ -49,12 +46,14 @@ const BookmarkedOffcanvas = ({user, advertisementId, name, ...props}) => {
     };
 
 
-
-
+    const handleDelete = async (savedAdvertisementId) => {
+      await FetchApi(`https://localhost:7026/Advertisements/DeleteSavedAdvertisement/${savedAdvertisementId}`, "DELETE")
+      setSavedAdvertisements(await FetchApi(`https://localhost:7026/Advertisements/GetSavedAdvertisements`, "GET"))
+    }
 
     return (
         <>
-      <Button variant="danger" onClick={handleSave} className="me-2" title="Mentés">
+      <Button variant={isSaved ? "danger" : "outline-danger"} onClick={handleSave} className="me-2" title="Mentés">
       <img loading='lazy' src={bookMark} alt="Mentés" />
       </Button>
       <Offcanvas show={show} onHide={handleClose} {...props}>
@@ -63,30 +62,33 @@ const BookmarkedOffcanvas = ({user, advertisementId, name, ...props}) => {
         </Offcanvas.Header>
         <Offcanvas.Body>
           {
-            savedAdvertisements && savedAdvertisements.map(advertisement => 
+            savedAdvertisements && savedAdvertisements.length !== 0 ? savedAdvertisements.map(savedAdvertisement => 
               (
-              <Container key={advertisement.id} fluid className="bg-secondary text-white rounded px-4 py-2 my-2">
+              <Container key={savedAdvertisement.id} fluid className="bg-secondary text-white rounded px-4 py-2 my-2">
                 <Row>
                   <Col md={8}>
                     <Row>
                       <h5>CompanyName</h5>
                     </Row>
                     <Row>
-                      <p>{advertisement.jobType}</p>
+                      <p>{savedAdvertisement.jobType}</p>
                     </Row>
                   </Col>
                   <Col md={4} className="d-flex align-items-center justify-content-end">
-                    <Button variant="danger">Törlés</Button>
+                    <Button onClick={() => handleDelete(savedAdvertisement.id)} variant="danger">Törlés</Button>
                   </Col>
                 </Row>
               </Container>
               )
-              )
+            ) :
+            <Container>
+              <p className="text-muted">Nincsenek mentett hirdetései.</p>
+            </Container>
           }
         </Offcanvas.Body>
       </Offcanvas>
     </>
     );
 }
- 
+
 export default BookmarkedOffcanvas;
