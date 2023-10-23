@@ -4,7 +4,7 @@ import OfferModal from './OfferModal';
 import BookmarkedOffcanvas from './BookmarkedOffcanvas';
 import stars from "../assets/svg/stars.svg"
 
-const AdvertismentItem = ({advertisement, index, user}) => {
+const AdvertismentItem = ({advertisement, index}) => {
 
   const [show, setShow] = useState(false);
 
@@ -27,7 +27,7 @@ const AdvertismentItem = ({advertisement, index, user}) => {
           <Container className='p-3'>
             <Row>
               <Col className="text-center">{advertisement.isHighlighted ? <Badge pill bg="warning">Kiemelt<img src={stars}/></Badge> : <Badge pill bg="info">asd</Badge>}</Col>
-              <Col className="text-center">{advertisement.applicationUser.companyName}</Col>
+              <Col className="text-center">{advertisement.advertiser}</Col>
               <Col className="text-center">{advertisement.jobType}</Col>
               <Col className="text-center">{advertisement.location.city}</Col>
               <Col className="text-center">{formatDateTime(advertisement.deadlineStart)}</Col>
@@ -61,7 +61,7 @@ const AdvertismentItem = ({advertisement, index, user}) => {
           <div className='container-fluid d-flex justify-content-end'>
             <ButtonGroup>
               <Button variant='outline-primary' onClick={handleShow}>Ajánlat küldése</Button>
-              <BookmarkedOffcanvas scroll={"true"} placement={"end"} user={user} advertisementId={advertisement.id}/>
+              <BookmarkedOffcanvas scroll={"true"} placement={"end"} advertisementId={advertisement.id} isSaved={advertisement.isSavedByUser}/>
             </ButtonGroup>
             <OfferModal show={show} handleClose={handleClose} advertisementDetails={advertisement}/>
           </div>

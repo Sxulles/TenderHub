@@ -5,7 +5,7 @@ import { Container, Row, Col, Button } from 'react-bootstrap';
 import arrows from "../assets/svg/arrow-down-up.svg"
 import Cookies from 'js-cookie';
 
-const Advertisments = ({user}) => {
+const Advertisments = () => {
 
     const [advertisements, setAdvertisements] = useState([]);
 
@@ -16,7 +16,7 @@ const Advertisments = ({user}) => {
     const FetchApi = () => {
         const token = Cookies.get("Authorization");
       try {
-          fetch('https://localhost:7026/Advertisement', {
+          fetch('https://localhost:7026/Advertisements/GetAdvertisements', {
             method: 'GET',
             credentials: 'include',
             headers: {
@@ -32,6 +32,7 @@ const Advertisments = ({user}) => {
               })
               .then((data) => {
                 setAdvertisements(data);
+                console.log(advertisements);
               })
               .catch((error) => {
                   console.error('Error while fetching data:', error);
@@ -68,7 +69,7 @@ const Advertisments = ({user}) => {
                     {
                     advertisements &&
                         advertisements.map((advertisement, index) => (
-                            <AdvertismentItem advertisement={advertisement} index={index} key={index} user={user} />
+                            <AdvertismentItem advertisement={advertisement} index={index} key={index} />
                         ))
                     }
                 </Accordion>
