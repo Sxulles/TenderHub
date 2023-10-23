@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import Cookies from 'js-cookie';
 import googleIcon from "../assets/svg/google.svg"
+import { useNavigate } from 'react-router-dom';
 
-const LoginForm = ({usernameSetter}) => {
+const LoginForm = () => {
+
+  const navigate = useNavigate();
 
   const [successfulLogin, setSuccessfulLogin] = useState(false);
 
@@ -20,15 +23,24 @@ const LoginForm = ({usernameSetter}) => {
     });
   };
 
+  useEffect(() => {
+    if(successfulLogin){
+      navigate("/advertisements")
+    }
+  }, [successfulLogin])
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await fetchApi()
 
     if(result.success){
+      console.log(result)
 
       Cookies.set('Authorization', result.token, { secure: true, sameSite: 'strict' });
+      Cookies.set('Username', result.username, {secure: true, sameSite: "strict"})
+
       setSuccessfulLogin(prevState => prevState = true)
-      usernameSetter(result.username);
+
       console.log("JWT Token saved")
     }
     else {
