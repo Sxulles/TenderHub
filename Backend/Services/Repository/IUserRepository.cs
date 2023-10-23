@@ -1,6 +1,6 @@
-﻿using Backend.Model.DbEntities;
+﻿using IdentityTest.Model;
 
-namespace Backend.Services.Repository
+namespace IdentityTest.Services.Repository
 {
     public interface IUserRepository
     {

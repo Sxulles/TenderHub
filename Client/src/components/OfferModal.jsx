@@ -15,7 +15,7 @@ const OfferModal = ({show, handleClose, advertisementDetails}) => {
       >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-            <h1>{`${advertisementDetails.applicationUser.companyName} - ${advertisementDetails.jobType}`}</h1>
+            <h1>{`${advertisementDetails.advertiser} - ${advertisementDetails.jobType}`}</h1>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>

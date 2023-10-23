@@ -1,11 +1,12 @@
-﻿using Backend.Model.DbEntities;
+﻿using IdentityTest.Model;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Backend.Services.Auth
+namespace IdentityTest.Services.Auth
 {
     public class TokenService : ITokenService
     {

@@ -1,15 +1,18 @@
-﻿using Backend.Model.DbEntities;
+﻿using IdentityTest.Model.DbEntities;
+using IdentityTest.Model.DTO;
 
-namespace Backend.Services.Repository
+namespace IdentityTest.Services.Repository
 {
     public interface IAdvertisementRepository
     {
-        ICollection<Advertisement> GetAll();
+        ICollection<AdvertisementResponse> GetAll(string userName);
 
         Task<bool> AddAdvertisement(Advertisement advertisement);
 
         Task<bool> SaveAdvertisementForUser(string userName, Guid advertisementId);
 
-        ICollection<Advertisement> GetSavedAdvertisementForUser(string userName);
+        ICollection<SavedAdvertisementResponse> GetSavedAdvertisementForUser(string userName);
+
+        Task<bool> DeleteAdvertisement(Guid savedAdvertisementId);
     }
 }

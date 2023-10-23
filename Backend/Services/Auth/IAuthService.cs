@@ -1,6 +1,4 @@
-﻿using Backend.Model.Auth;
-
-namespace Backend.Services.Auth
+﻿namespace IdentityTest.Services.Auth
 {
     public interface IAuthService
     {

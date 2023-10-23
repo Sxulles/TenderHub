@@ -1,8 +1,7 @@
-﻿using Backend.Model.Auth;
-using Backend.Model.DbEntities;
+﻿using IdentityTest.Model;
 using Microsoft.AspNetCore.Identity;
 
-namespace Backend.Services.Auth
+namespace IdentityTest.Services.Auth
 {
     public class AuthService : IAuthService
     {
@@ -20,7 +19,7 @@ namespace Backend.Services.Auth
         #region RegisterAsync
         public async Task<AuthResult> RegisterAsync(string email, string username, string password, string role, string userType)
         {
-            var user = new ApplicationUser { UserName = username, Email = email, CompanyName = "Company", UserType = userType };
+            var user = new ApplicationUser { UserName = username, Email = email, CompanyName = "Company", UserType=userType};
             var result = await _userManager.CreateAsync(user, password);
 
             if (!result.Succeeded)
@@ -61,11 +60,6 @@ namespace Backend.Services.Auth
             }
 
             var userRole = await _userManager.GetRolesAsync(managedUser);
-
-            foreach (var role in userRole)
-            {
-                _logger.LogInformation($"USERROLE: {role}");
-            }
 
             var isPasswordValid = await _userManager.CheckPasswordAsync(managedUser, password);
 
