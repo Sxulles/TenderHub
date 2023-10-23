@@ -1,20 +1,39 @@
-﻿using Backend.Data;
-using Backend.Model.DbEntities;
+﻿using IdentityTest.Data;
+using IdentityTest.Model.DbEntities;
+using IdentityTest.Model.DTO;
 using Microsoft.EntityFrameworkCore;
 
-namespace Backend.Services.Repository
+namespace IdentityTest.Services.Repository
 {
-    public class AdvertisementRepository : IAdvertisementRepository
+    public class AdvertisementRepository : IAdvertisementRepository 
     {
-        public ICollection<Advertisement> GetAll()
+        public ICollection<AdvertisementResponse> GetAll(string userName)
         {
             using var dbContext = new ApplicationDbContext();
-            return dbContext.Advertisements
+            var advertisements = dbContext.Advertisements
                 .Include(a => a.ApplicationUser)
                 .Include(a => a.Location)
                 .Include(a => a.Jobtasks).ThenInclude(j => j.Surface)
                 .OrderByDescending(a => a.IsHighlighted)
                 .ToList();
+
+
+            var savedAdvertisementsOfUser = GetSavedAdvertisementForUser(userName).Select(s => s.Id);
+
+
+            return advertisements.Select(advertisement => new AdvertisementResponse
+            {
+                Id = advertisement.Id,
+                Status = advertisement.Status,
+                JobType = advertisement.JobType,
+                IsHighlighted = advertisement.IsHighlighted,
+                Jobtasks = advertisement.Jobtasks,
+                Location = advertisement.Location,
+                DeadlineStart = advertisement.DeadlineStart,
+                DeadlineEnd = advertisement.DeadlineEnd,
+                Advertiser = advertisement.ApplicationUser?.CompanyName,
+                IsSavedByUser = savedAdvertisementsOfUser.Contains(advertisement.Id)
+            }).ToList();
         }
 
         public async Task<bool> AddAdvertisement(Advertisement advertisement)
@@ -32,40 +51,55 @@ namespace Backend.Services.Repository
 
         public async Task<bool> SaveAdvertisementForUser(string userName, Guid advertismentId)
         {
-            try
+            using var dbContext = new ApplicationDbContext();
+
+            var userId = dbContext.Users.FirstOrDefault(u => u.UserName.ToLower() == userName.ToLower()).Id;
+
+            var savedAdvertisement = new SavedAdvertisement
             {
-                using var dbContext = new ApplicationDbContext();
-                var advertisement = dbContext.Advertisements.FirstOrDefault(a => a.Id == advertismentId);
-                var user = dbContext.Users.FirstOrDefault(u => u.UserName.ToLower() == userName.ToLower());
-                advertisement.ApplicationUserId = user.Id;
+                ApplicationUserId = userId,
+                AdvertisementId = advertismentId
+            };
 
+            bool isAlreadySaved = dbContext.SavedAdvertisements.Any(s => s.AdvertisementId == advertismentId && s.ApplicationUserId == userId);
 
+            if (!isAlreadySaved)
+            {
+                dbContext.SavedAdvertisements.Add(savedAdvertisement);
                 await dbContext.SaveChangesAsync();
                 return true;
             }
-            catch (Exception e)
-            {
-                return false;
-            }
+
+            return false;
         }
 
-        public ICollection<Advertisement> GetSavedAdvertisementForUser(string userName)
+        public ICollection<SavedAdvertisementResponse> GetSavedAdvertisementForUser(string userName)
         {
             using var dbContext = new ApplicationDbContext();
-            return dbContext.Advertisements.Where(a => a.ApplicationUser.UserName == userName).ToList();
+            var savedAdvertisements = dbContext.SavedAdvertisements
+                .Where(s => s.ApplicationUser.UserName == userName)
+                .Include(s => s.Advertisement)
+                .Include(s => s.ApplicationUser)
+                .ToList();
+
+            return savedAdvertisements.Select(sa => new SavedAdvertisementResponse
+            {
+                Id = sa.Id,
+                JobType = sa.Advertisement.JobType,
+                Advertiser = sa.ApplicationUser.CompanyName
+            }).ToList();
         }
 
-        public bool DeleteSavedAdvertisement(string username)
+        public async Task<bool> DeleteAdvertisement(Guid savedAdvertisementId)
         {
             try
             {
                 using var dbContext = new ApplicationDbContext();
-                var advertisement = dbContext.Advertisements.FirstOrDefault(a => a.ApplicationUser.UserName == username);
-                dbContext.Users.FirstOrDefault(u => u.UserName == username).Advertisements.Remove(advertisement);
-                dbContext.SaveChanges();
+                dbContext.SavedAdvertisements.Remove(dbContext.SavedAdvertisements.FirstOrDefault(s => s.Id == savedAdvertisementId));
+                await dbContext.SaveChangesAsync();
                 return true;
             }
-            catch (Exception)
+            catch 
             {
                 return false;
             }

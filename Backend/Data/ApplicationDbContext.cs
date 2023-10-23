@@ -1,9 +1,10 @@
-﻿using Backend.Model.DbEntities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using IdentityTest.Model;
+using IdentityTest.Model.DbEntities;
 
-namespace Backend.Data
+namespace IdentityTest.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
@@ -11,6 +12,7 @@ namespace Backend.Data
         public DbSet<Location> Locations { get; set; }
         public DbSet<Jobtask> Jobtasks { get; set; }
         public DbSet<Surface> Surfaces { get; set; }
+        public DbSet<SavedAdvertisement> SavedAdvertisements { get; set; }
 
         public ApplicationDbContext()
         {
@@ -23,6 +25,11 @@ namespace Backend.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<SavedAdvertisement>()
+                .HasOne(sa => sa.ApplicationUser)
+                .WithMany(au => au.SavedAdvertisements)
+                .OnDelete(DeleteBehavior.Restrict);
+
             base.OnModelCreating(modelBuilder);
         }
     }

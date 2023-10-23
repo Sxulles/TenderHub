@@ -1,8 +1,8 @@
-﻿using Backend.Model.DbEntities;
+﻿using IdentityTest.Model.DbEntities;
 
-namespace Backend.Services.Factory
+namespace IdentityTest.Services.Factory
 {
-    public class AdvertisementGenerator
+    public static class AdvertisementGenerator
     {
         public static Advertisement CreateAdvertisement(Guid userId)
         {

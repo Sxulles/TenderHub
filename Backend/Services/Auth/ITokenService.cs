@@ -1,6 +1,8 @@
-﻿using Backend.Model.DbEntities;
+﻿
 
-namespace Backend.Services.Auth
+using IdentityTest.Model;
+
+namespace IdentityTest.Services.Auth
 {
     public interface ITokenService
     {

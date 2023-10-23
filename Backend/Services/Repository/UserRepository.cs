@@ -1,7 +1,7 @@
-﻿using Backend.Data;
-using Backend.Model.DbEntities;
+﻿using IdentityTest.Data;
+using IdentityTest.Model;
 
-namespace Backend.Services.Repository
+namespace IdentityTest.Services.Repository
 {
     public class UserRepository : IUserRepository
     {

@@ -1,8 +1,8 @@
-﻿using Backend.Model.Auth;
-using Backend.Services.Auth;
+﻿using IdentityTest.Data;
+using IdentityTest.Services.Auth;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Backend.Controllers
+namespace IdentityTest.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -38,7 +38,7 @@ namespace Backend.Controllers
 
         [HttpPost]
         [Route("RegisterAdvertiser")]
-        public async Task<ActionResult<RegistrationResponse>> RegisterAvertiser(RegistrationRequest request)
+        public async Task<ActionResult<RegistrationResponse>> RegisterAdvertiser(RegistrationRequest request)
         {
             if (!ModelState.IsValid)
             {
